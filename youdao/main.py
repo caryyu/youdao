@@ -27,7 +27,8 @@ def show_result(result):
     if result['errorCode'] != 0:
         print colored(YoudaoSpider.error_code[result['errorCode']], 'red')
     else:
-        print colored('[%s]' % result['query'], 'magenta')
+        # print colored('[%s]' % result['query'], 'magenta')
+        print '[%s]' % result['query'].encode('utf-8').strip()
         if 'basic' in result:
             if 'us-phonetic' in result['basic']:
                 print colored(u'美音:', 'blue'), colored('[%s]' % result['basic']['us-phonetic'], 'green'),
@@ -40,8 +41,10 @@ def show_result(result):
             print colored('\t'+'\n\t'.join(result['basic']['explains']), 'yellow')
 
         if 'translation' in result:
-            print colored(u'有道翻译:', 'blue')
-            print colored('\t'+'\n\t'.join(result['translation']), 'cyan')
+            # print colored(u'有道翻译:', 'blue')
+            # print colored('\t'+'\n\t'.join(result['translation']), 'cyan')
+            print u'有道翻译:'.encode('utf-8').strip()
+            print '\t'+'\n\t'.join(result['translation']).encode('utf-8').strip()
 
         if 'web' in result:
             print colored(u'网络释义:', 'blue')
