@@ -27,7 +27,6 @@ def show_result(result):
     if result['errorCode'] != 0:
         print colored(YoudaoSpider.error_code[result['errorCode']], 'red')
     else:
-        # print colored('[%s]' % result['query'], 'magenta')
         print '[%s]' % result['query'].encode('utf-8').strip()
         if 'basic' in result:
             if 'us-phonetic' in result['basic']:
@@ -41,8 +40,6 @@ def show_result(result):
             print colored('\t'+'\n\t'.join(result['basic']['explains']), 'yellow')
 
         if 'translation' in result:
-            # print colored(u'有道翻译:', 'blue')
-            # print colored('\t'+'\n\t'.join(result['translation']), 'cyan')
             print u'有道翻译:'.encode('utf-8').strip()
             print '\t'+'\n\t'.join(result['translation']).encode('utf-8').strip()
 
@@ -64,7 +61,7 @@ def play(voice_file):
         os.dup2(out2, 2)
 
 
-def query(keyword, use_db=True,  use_dict=True, play_voice=False):
+def query(keyword, use_api=False, use_db=True,  use_dict=True, play_voice=False):
     update_word = [True]
     word = Word.get_word(keyword)
     result = {'query': keyword, 'errorCode': 60}
@@ -104,7 +101,7 @@ def query(keyword, use_db=True,  use_dict=True, play_voice=False):
         # 从stardict中没有匹配单词
         if not result['errorCode'] == 0:
             spider = YoudaoSpider(keyword)
-            result.update(spider.get_result(use_api=False))
+            result.update(spider.get_result(use_api))
 
         # 更新数据库
         new_word = word if word else Word()
@@ -146,6 +143,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='控制台下的有道词典')
     parser.add_argument('word', nargs='*', type=str)
     parser.add_argument('-y', '--youdao', action='store_true', help='优先使用有道词典（默认使用stardict）')
+    parser.add_argument('-a', '--api', action='store_true', help='使用API 而不是解析网页获取结果')
     parser.add_argument('-n', '--new', action='store_true', help='忽略本地数据库，强制重新查词')
     parser.add_argument('-l', '--list', action='store_true', help='列出本地保存的所有单词')
     parser.add_argument('-c', '--clean', action='store_true', help='清空本地数据库')
@@ -190,10 +188,11 @@ def main():
         del_word(keyword)
         return
 
+    use_api = args.api
     use_db = not args.new
     use_dict = not args.youdao
     play_voice = args.voice
-    query(keyword, use_db, use_dict, play_voice)
+    query(keyword, use_api, use_db, use_dict, play_voice)
 
 
 if __name__ == '__main__':

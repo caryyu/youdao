@@ -77,6 +77,7 @@ class YoudaoSpider:
         # query 搜索的关键字
         keyword = root.find(class_='keyword')
         if not keyword:
+            print self.word
             self.result['query'] = self.word
         else:
             self.result['query'] = unicode(keyword.string)
